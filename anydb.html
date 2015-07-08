@@ -1,0 +1,21 @@
+<head>
+  <title>Any-db example</title>
+</head>
+
+<body>
+  {{>main}}
+</body>
+
+<template name="main">
+  <div class="row">
+    <input type="text">
+    <button id="submit">Submit</button>
+  </div>
+  {{#each messages}}
+    <!-- Each item has an "unverified" field that is true
+    if it is rendered due to latency compensation and
+    false if the item has been verified by the server -->
+    <div class="row">{{text}}{{#if unverified}}*{{/if}}</div>
+  {{/each}}
+  <button id="reset">Reset</button>
+</template>
