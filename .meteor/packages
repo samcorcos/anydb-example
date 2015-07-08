@@ -8,3 +8,4 @@ meteor-platform
 ccorcos:any-db
 ccorcos:neo4j
 coffeescript
+ramda:ramda

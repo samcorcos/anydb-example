@@ -1,21 +1,40 @@
-<head>
-  <title>Any-db example</title>
-</head>
-
 <body>
   {{>main}}
 </body>
 
 <template name="main">
-  <div class="row">
-    <input type="text">
-    <button id="submit">Submit</button>
+  <div class="wrapper">
+    <div class="left">
+      <div class="row">
+        <button class="newRoom">New Room</button>
+      </div>
+      {{#each rooms}}
+        {{#if isCurrentRoom _id}}
+          <div class="row room selected">
+            <!-- Each item has an "unverified" field that is true
+            if it is rendered due to latency compensation and
+            false if the item has been verified by the server -->
+            {{_id}}{{#if unverified}}*{{/if}}
+          </div>
+        {{else}}
+          <div class="row room">
+            {{_id}}{{#if unverified}}*{{/if}}
+          </div>
+        {{/if}}
+      {{/each}}
+    </div>
+    <div class="right">
+      {{#if currentRoom}}
+        <div class="row">
+          <input type="text">
+          <button class="newMsg">NEW MSG</button>
+        </div>
+        {{#each msgs}}
+          <div class="row msg">
+            {{text}}{{#if unverified}}*{{/if}}
+          </div>
+        {{/each}}
+      {{/if}}
+    </div>
   </div>
-  {{#each messages}}
-    <!-- Each item has an "unverified" field that is true
-    if it is rendered due to latency compensation and
-    false if the item has been verified by the server -->
-    <div class="row">{{text}}{{#if unverified}}*{{/if}}</div>
-  {{/each}}
-  <button id="reset">Reset</button>
 </template>
