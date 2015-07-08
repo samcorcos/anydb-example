@@ -75,6 +75,13 @@ if Meteor.isClient
       Meteor.call 'newMsg', Session.get('roomId'), id, input, (err,res) ->
         if err then subs.msgs.handleUndo(id)
       input = ''
+    'keyup #input': (e,t) ->
+      if e.keyCode is 13
+        input = t.find('input').value
+        id = Random.hexString(24)
+        Meteor.call 'newMsg', Session.get('roomId'), id, input, (err,res) ->
+          if err then subs.msgs.handleUndo(id)
+        input = ''
 
 
 Meteor.methods
