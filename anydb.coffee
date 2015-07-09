@@ -59,29 +59,36 @@ if Meteor.isClient
     isCurrentRoom: (roomId) -> Session.equals('roomId', roomId)
     currentRoom: (roomId) -> Session.get('roomId')
 
+  newMsg = (text) ->
+    id = DB.newId()
+    Meteor.call 'newMsg', Session.get('roomId'), id, text, (err,res) ->
+      if err then subs.msgs.handleUndo(id)
+
+  newRoom = () ->
+    id = Random.hexString(24)
+    Meteor.call 'newRoom', id, (err,res) ->
+      if err then subs.rooms.handleUndo(id)
+    Session.set('roomId', id)
+        
+
   Template.main.events
     # When you click on a room within the rooms list,
     # you set the current room to the one you selected.
-    'click .room': -> Session.set('roomId', @_id)
+    'click .room': -> 
+      Session.set('roomId', @_id)
     # Creates a new room
     'click .newRoom': (e,t) ->
-      id = Random.hexString(24)
-      Meteor.call 'newRoom', id, (err,res) ->
-        if err then subs.rooms.handleUndo(id)
+      newRoom()
     # Creates a new message
     'click .newMsg': (e,t) ->
       input = t.find('input').value
-      id = Random.hexString(24)
-      Meteor.call 'newMsg', Session.get('roomId'), id, input, (err,res) ->
-        if err then subs.msgs.handleUndo(id)
-      input = ''
+      newMsg(input)
+      t.find('input').value = ''
     'keyup #input': (e,t) ->
       if e.keyCode is 13
         input = t.find('input').value
-        id = Random.hexString(24)
-        Meteor.call 'newMsg', Session.get('roomId'), id, input, (err,res) ->
-          if err then subs.msgs.handleUndo(id)
-        input = ''
+        newMsg(input)
+        t.find('input').value = ''
 
 
 Meteor.methods
@@ -115,7 +122,7 @@ Meteor.methods
     if Meteor.isServer
       Neo4j.query """
         MATCH (room:ROOM {_id:"#{roomId}"})
-        CREATE (room)-[:OWNS]->(:MSG #{Neoj4.stringify(msg)})
+        CREATE (room)-[:OWNS]->(:MSG #{Neo4j.stringify(msg)})
       """
       DB.triggerDeps("chatroom:#{roomId}")
     else
