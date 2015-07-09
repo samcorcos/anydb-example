@@ -69,12 +69,12 @@ if Meteor.isClient
     Meteor.call 'newRoom', id, (err,res) ->
       if err then subs.rooms.handleUndo(id)
     Session.set('roomId', id)
-        
+
 
   Template.main.events
     # When you click on a room within the rooms list,
     # you set the current room to the one you selected.
-    'click .room': -> 
+    'click .room': ->
       Session.set('roomId', @_id)
     # Creates a new room
     'click .newRoom': (e,t) ->
@@ -89,9 +89,17 @@ if Meteor.isClient
         input = t.find('input').value
         newMsg(input)
         t.find('input').value = ''
+    'click #reset': (e,t) ->
+      Meteor.call "neo4jreset"
 
 
 Meteor.methods
+  neo4jreset: ->
+    if Meteor.isServer
+      Neo4j.reset()
+    else
+      window.location.reload()
+
   newRoom: (id) ->
     check(id, String)
     room =
