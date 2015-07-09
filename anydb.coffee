@@ -1,6 +1,6 @@
 if Meteor.isServer
   # Connect to Neo4j
-  @Neo4j = new Neo4jDB("http://neo4j_test:QjCTKSXHFKMezZc40Say@neo4jtest.sb05.stations.graphenedb.com:24789")
+  @Neo4j = Neo4j = new Neo4jDB("http://neo4j_test:QjCTKSXHFKMezZc40Say@neo4jtest.sb05.stations.graphenedb.com:24789")
 
   DB.publish
     name: 'chatrooms'
